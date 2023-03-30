@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Tasks from "./components/Tasks/Tasks";
 import NewTask from "./components/NewTask/NewTask";
@@ -6,22 +6,25 @@ import useHttp from "./components/Hooks/use-http";
 
 function App() {
   const [tasks, setTasks] = useState([]);
-  const transformTasks = useCallback((dataObj) => {
-    const loadedTasks = [];
 
-    for (const taskKey in dataObj) {
-      loadedTasks.push({ id: taskKey, text: dataObj[taskKey].text });
-    }
-
-    setTasks(loadedTasks);
-  }, []);
-
-  const { isLoading, error, sendRequest: fetchTasks } = useHttp(transformTasks);
+  const { isLoading, error, sendRequest: fetchTasks } = useHttp();
 
   useEffect(() => {
-    fetchTasks({
-      url: "https://simple-react-app-2b7b6-default-rtdb.europe-west1.firebasedatabase.app/tasks.json",
-    });
+    const transformTasks = (dataObj) => {
+      const loadedTasks = [];
+
+      for (const taskKey in dataObj) {
+        loadedTasks.push({ id: taskKey, text: dataObj[taskKey].text });
+      }
+
+      setTasks(loadedTasks);
+    };
+    fetchTasks(
+      {
+        url: "https://simple-react-app-2b7b6-default-rtdb.europe-west1.firebasedatabase.app/tasks.json",
+      },
+      transformTasks
+    );
   }, [fetchTasks]);
 
   const taskAddHandler = (task) => {
