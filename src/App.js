@@ -2,41 +2,29 @@ import React, { useEffect, useState } from "react";
 
 import Tasks from "./components/Tasks/Tasks";
 import NewTask from "./components/NewTask/NewTask";
+import useHttp from "./components/Hooks/use-http";
 
 function App() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const transformTasks = (dataObj) => {
+    const loadedTasks = [];
 
-  const fetchTasks = async (taskText) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(
-        "https://simple-react-app-27b6-default-rtdb.europe-west1.firebasedatabase.app/tasks.json"
-      );
-
-      if (!response.ok) {
-        throw new Error("Request failed!");
-      }
-
-      const data = await response.json();
-
-      const loadedTasks = [];
-
-      for (const taskKey in data) {
-        loadedTasks.push({ id: taskKey, text: data[taskKey].text });
-      }
-
-      setTasks(loadedTasks);
-    } catch (err) {
-      setError(err.message || "Something went wrong!");
+    for (const taskKey in dataObj) {
+      loadedTasks.push({ id: taskKey, text: dataObj[taskKey].text });
     }
-    setIsLoading(false);
+
+    setTasks(loadedTasks);
   };
 
+  const { isLoading, error, sendRequest } = useHttp(
+    {
+      url: "https://simple-react-app-2b7b6-default-rtdb.europe-west1.firebasedatabase.app/tasks.json",
+    },
+    transformTasks
+  );
+
   useEffect(() => {
-    fetchTasks();
+    sendRequest();
   }, []);
 
   const taskAddHandler = (task) => {
@@ -50,7 +38,7 @@ function App() {
         items={tasks}
         loading={isLoading}
         error={error}
-        onFetch={fetchTasks}
+        onFetch={sendRequest}
       />
     </React.Fragment>
   );
