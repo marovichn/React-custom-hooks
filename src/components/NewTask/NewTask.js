@@ -2,8 +2,25 @@ import { useState } from "react";
 
 import Section from "../UI/Section";
 import TaskForm from "./TaskForm";
+import useHttp from "../Hooks/use-http";
 
 const NewTask = (props) => {
+  /* const createTask=(data)=>{
+    const generatedId = data.name; // firebase-specific => "name" contains generated id
+    const createdTask = { id: generatedId, text: taskText };
+
+    props.onAddTask(createdTask);
+  };
+
+  const {isLoading, error, sendRequest: } = useHttp({
+    url: "https://simple-react-app-2b7b6-default-rtdb.europe-west1.firebasedatabase.app/tasks.json",
+    method: "POST",
+    body: JSON.stringify({ text: taskText }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  },createTask); */
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
