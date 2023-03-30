@@ -4,15 +4,13 @@ import useHttp from "../Hooks/use-http";
 
 const NewTask = (props) => {
   const { isLoading, error, sendRequest } = useHttp();
+  const createTask = (taskText, data) => {
+    const generatedId = data.name;
+    const createdTask = { id: generatedId, text: taskText };
 
+    props.onAddTask(createdTask);
+  };
   const enterTaskHandler = async (taskText) => {
-    const createTask = (data) => {
-      const generatedId = data.name;
-      const createdTask = { id: generatedId, text: taskText };
-
-      props.onAddTask(createdTask);
-    };
-
     sendRequest(
       {
         url: "https://simple-react-app-2b7b6-default-rtdb.europe-west1.firebasedatabase.app/tasks.json",
@@ -22,7 +20,7 @@ const NewTask = (props) => {
           "Content-Type": "application/json",
         },
       },
-      createTask
+      createTask.bind(null, taskText)
     );
   };
 
